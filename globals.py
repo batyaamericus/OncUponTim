@@ -1,0 +1,1 @@
+MAIN_URL = 'https://blog.reedsy.com/short-stories/fiction/page/'
