@@ -9,23 +9,21 @@ from urllib.request import Request, urlopen
 
 
 class ShortStory:
-    def __init__(self, soup, url):
+    def __init__(self, soup):
         '''
         Initialize the ShortStory object.
         :param soup: BeautifulSoup object
-        :param url: URL of the story
-        collect number of likes, and number of comments, if won contest, which contest won, author, number of author
-        submissions, story text, sensitive content tag?, if author responds to comments
+        collect number of num_likes, and number of num_comments, if won contest, which contest won, author, number of author
+        submissions, story text, sensitive content tag?, if author responds to num_comments
         '''
-        self.url = url
         self.soup = soup
-        self.story_str = self.soup.find(class_='content').get_text()
-        self.author = self.soup.find(class_='titre d-block d-xl-none').get_text()
-        self.title = self.soup.find(class_='pb-3').get_text()
-        self.labels = self.soup.find(class_='content-tag').get_text().split()
-        self.likes = int(self.soup.find(class_='oeuvre-fiche-likes oeuvre-fiche-box').get_text()[0])
-        self.comments = int(self.soup.find(class_='nb-com').get_text().split()[0])
-        self.author_url = self.url.split('/en/story/')[0] + self.soup.find(class_='titre d-block d-xl-none').find('a').get('href')
+        self.title = self.soup.title.string.split('by ')[0].split(' –')[0]
+        self.author = self.soup.title.string.split('by ')[1].split(r' –')[0]
+        # self.categories = self.soup.find(class_='content-tag').get_text().split()
+        # self.num_likes = int(self.soup.find(class_='oeuvre-fiche-num_likes oeuvre-fiche-box').get_text()[0])
+        # self.num_comments = int(self.soup.find(class_='nb-com').get_text().split()[0])
+        # self.story_str = self.soup.find(class_='content').get_text()
+
         # add functions to get words, number of words, unique words, unique words percent, number of sentences, etc
 
     @staticmethod
@@ -34,8 +32,14 @@ class ShortStory:
         Get the story's info and turn into soup object.
         Create an ShortStory object from the soup object.
         """
-        req = Request('https://blog.reedsy.com/short-story/7wygpy/', headers={'User-Agent': 'Mozilla/5.0'})
+        req = Request(url, headers={'User-Agent': 'Mozilla/5.0'})
         webpage = urlopen(req).read()
         soup = BeautifulSoup(webpage, 'html.parser')
-        return ShortStory(soup, url)
+        return ShortStory(soup)
 
+    def to_dict(self):
+        """
+        Return the story's info in a dictionary.
+        """
+        return {'title': self.title, 'author': self.author, 'author_url': self.author_url, 'story_str': self.story_str,
+                'num_likes': self.num_likes, 'num_comments': self.num_comments, 'categories': self.categories}
