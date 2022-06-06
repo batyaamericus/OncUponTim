@@ -41,5 +41,6 @@ class ShortStory:
         """
         Return the story's info in a dictionary.
         """
-        return {'title': self.title, 'author': self.author, 'author_url': self.author_url, 'story_str': self.story_str,
-                'num_likes': self.num_likes, 'num_comments': self.num_comments, 'categories': self.categories}
+        return {'title': self.title, 'author': self.author}
+        # , 'author_url': self.author_url, 'story_str': self.story_str,
+        #         'num_likes': self.num_likes, 'num_comments': self.num_comments, 'categories': self.categories}
