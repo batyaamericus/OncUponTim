@@ -1,1 +1,1 @@
-MAIN_URL = 'https://blog.reedsy.com/short-stories/fiction/page/'
+FICTION_SHORT_STORIES_URL = 'https://blog.reedsy.com/short-stories/fiction/page/'
