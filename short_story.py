@@ -1,5 +1,6 @@
 from bs4 import BeautifulSoup
 from urllib.request import Request, urlopen
+import re
 # import nltk
 # from nltk.corpus import stopwords
 #
@@ -15,6 +16,7 @@ class ShortStory(object):
         :param url: url that the soup came from
         '''
         self.url = url
+        self.story_id = self.url.split('/')[-2]
         self.soup = soup
         self.title = self.soup.title.string.split('by ')[0].split(' –')[0]
         self.author = self.soup.title.string.split('by ')[1].split(r' –')[0]
@@ -32,6 +34,8 @@ class ShortStory(object):
         self.num_likes = int(likes[0])
         self.num_comments = int(comments[0])
         self.story_html = self.soup.find('article')
+        pub_date_pattern = '[A-Z][a-z]+ \d{2}, \d{4} \d{2}:\d{2}'
+        self.date_published = [re.search(pub_date_pattern, tag.get_text())[0] for tag in soup.find_all(class_='cell-shrink') if re.search(pub_date_pattern, tag.get_text())][0]
 
     @staticmethod
     def from_soup(url):
