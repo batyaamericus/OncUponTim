@@ -1,4 +1,3 @@
-import requests
 from bs4 import BeautifulSoup
 from urllib.request import Request, urlopen
 # import nltk
@@ -8,23 +7,31 @@ from urllib.request import Request, urlopen
 # stops = set(stopwords.words('english'))
 
 
-class ShortStory:
-    def __init__(self, soup):
+class ShortStory(object):
+    def __init__(self, soup, url):
         '''
         Initialize the ShortStory object.
         :param soup: BeautifulSoup object
-        collect number of num_likes, and number of num_comments, if won contest, which contest won, author, number of author
-        submissions, story text, sensitive content tag?, if author responds to num_comments
+        :param url: url that the soup came from
         '''
+        self.url = url
         self.soup = soup
         self.title = self.soup.title.string.split('by ')[0].split(' –')[0]
         self.author = self.soup.title.string.split('by ')[1].split(r' –')[0]
-        # self.categories = self.soup.find(class_='content-tag').get_text().split()
-        # self.num_likes = int(self.soup.find(class_='oeuvre-fiche-num_likes oeuvre-fiche-box').get_text()[0])
-        # self.num_comments = int(self.soup.find(class_='nb-com').get_text().split()[0])
-        # self.story_str = self.soup.find(class_='content').get_text()
-
-        # add functions to get words, number of words, unique words, unique words percent, number of sentences, etc
+        # taking the second element of the list created by .split() would give us only the contest number, but
+        # supposedly not all stories have been entered into contests and I don't want to get an error
+        # so we'll preprocess
+        # TODO can pull link to contest from here (NLP)
+        self.contest_num = self.soup.find(class_='row-blue-dark').a.string.split()
+        if soup.find(class_='row-super-thin row-blue'):
+            self.won_contest = [part for part in self.soup.find(class_='row-super-thin row-blue').get_text().split('\n') if part]
+        else:
+            self.won_contest = None
+        self.categories = self.soup.find(class_='small space-top-xs-md').get_text().split()
+        likes, comments = [part.split() for part in self.soup.find(class_='text-grey space-top-xs-md').get_text().split('\n') if part and part.split()]
+        self.num_likes = int(likes[0])
+        self.num_comments = int(comments[0])
+        self.story_html = self.soup.find('article')
 
     @staticmethod
     def from_soup(url):
@@ -35,12 +42,10 @@ class ShortStory:
         req = Request(url, headers={'User-Agent': 'Mozilla/5.0'})
         webpage = urlopen(req).read()
         soup = BeautifulSoup(webpage, 'html.parser')
-        return ShortStory(soup)
+        return ShortStory(soup, url)
 
     def to_dict(self):
         """
         Return the story's info in a dictionary.
         """
-        return {'title': self.title, 'author': self.author}
-        # , 'author_url': self.author_url, 'story_str': self.story_str,
-        #         'num_likes': self.num_likes, 'num_comments': self.num_comments, 'categories': self.categories}
+        return self.__dict__
