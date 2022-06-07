@@ -17,7 +17,8 @@ def story_data_to_df():
             story_data = short_story.ShortStory.from_soup(url)
             dict_to_convert[story_data.story_id] = story_data.to_dict()
             time.sleep(2)
-    except:
+    except Exception as ex:
+        print(ex)
         return pd.DataFrame.from_dict(dict_to_convert, orient='index')
     return pd.DataFrame.from_dict(dict_to_convert, orient='index')
 
