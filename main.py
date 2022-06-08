@@ -14,13 +14,13 @@ import time
 
 def get_urls():
     """
-    Collects the urls of all the website's texts
+    Collects the urls of all the website's short stories under a certain category
     url: https://blog.reedsy.com/short-stories/fiction/page/.
-    Returns a set of urls.
+    Returns a list of urls.
     """
 
     out_urls = []
-    urls = [MAIN_URL + f"{str(page)}" for page in range(2, 1268 + 1)]
+    urls = [FICTION_SHORT_STORIES_URL + f"{str(page)}" for page in range(2, 1268 + 1)]
     for u in tqdm(urls):
         req = Request(u, headers={'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_12_2) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/55.0.2883.95 Safari/537.36'})
         time.sleep(2)
