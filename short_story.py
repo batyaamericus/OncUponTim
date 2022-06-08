@@ -1,6 +1,8 @@
 import requests
 from bs4 import BeautifulSoup
 from urllib.request import Request, urlopen
+import pandas as pd
+from tqdm import tqdm
 # import nltk
 # from nltk.corpus import stopwords
 #
@@ -44,3 +46,13 @@ class ShortStory:
         return {'title': self.title, 'author': self.author}
         # , 'author_url': self.author_url, 'story_str': self.story_str,
         #         'num_likes': self.num_likes, 'num_comments': self.num_comments, 'categories': self.categories}
+
+
+def scrape_pages():
+    # import urls from csv
+    df = pd.read_csv("text_urls.csv")
+    urls = df.urls.tolist()
+
+    # create instances / scrape
+    for url in tqdm(urls):
+        ShortStory.from_soup(url)
