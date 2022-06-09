@@ -12,14 +12,14 @@ def story_data_to_df():
     """
     urls_df = pd.read_csv('text_urls.csv')
     dict_to_convert = {}
-    try:
-        for url in tqdm(urls_df['urls']):
+    for i, url in enumerate(tqdm(urls_df['urls'].iloc[723:])):
+        try:
             story_data = short_story.ShortStory.from_soup(url)
             dict_to_convert[story_data.story_id] = story_data.to_dict()
             time.sleep(2)
-    except Exception as ex:
-        print(ex)
-        return pd.DataFrame.from_dict(dict_to_convert, orient='index')
+        except Exception as ex:
+            print(f'story number {i} was not extracted. Error: {ex}')
+            continue
     return pd.DataFrame.from_dict(dict_to_convert, orient='index')
 
 
